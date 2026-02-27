@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import MOVIES from "../Movies.js";
 import { Box, Grid, Typography } from "@mui/material";
 import { Modal } from "../components/Modal.jsx";
 import { useMovie } from "../context/MovieContext.jsx";
@@ -12,32 +11,23 @@ export const FilterType = Object.freeze({
 });
 
 export function Home() {
-  const { searchQuery } = useMovie();
+  const { searchQuery ,moviesData} = useMovie();
 
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [open, setOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState(SortOrder.ASCENDING);
-
-  const movieList = useMemo(() => {
-    try {
-      const stored = localStorage.getItem("movies");
-      return stored ? JSON.parse(stored) : MOVIES;
-    } catch (error) {
-      return MOVIES;
-    }
-  }, []);
-
+  
   const filterType =
     !searchQuery || !searchQuery.trim() ? FilterType.ALL : FilterType.SEARCH;
 
   const filterMovies = useMemo(() => {
     if (filterType === FilterType.ALL) {
-      return movieList;
+      return moviesData;
     }
-    return movieList.filter((movie) =>
+    return moviesData.filter((movie) =>
       movie.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [filterType, searchQuery, movieList]);
+  }, [filterType, searchQuery, moviesData]);
 
   const movies = useMemo(() => {
     return [...filterMovies].sort((a, b) => {

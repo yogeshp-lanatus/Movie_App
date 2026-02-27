@@ -1,7 +1,6 @@
 import { Box, styled } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import movies from "../Movies";
-import { useState } from "react";
+import { useMovie } from "../context/MovieContext";
 
 // Styled components for reuse
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -17,20 +16,15 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 export function EditPage() {
-  const [rows, setRows] = useState(() => {
-    const storedMovies = localStorage.getItem("movies");
-    if (storedMovies) return JSON.parse(storedMovies);
-    localStorage.setItem("movies", JSON.stringify(movies));
-    return movies;
-  });
+  const { moviesData, setMovieData } = useMovie();
 
   const setRowsAndPersist = (updatedRows) => {
-    setRows(updatedRows);
+    setMovieData(updatedRows);
     localStorage.setItem("movies", JSON.stringify(updatedRows));
   };
 
   const handleRowUpdate = (newRow) => {
-    const updatedRows = rows.map((row) =>
+    const updatedRows = moviesData.map((row) =>
       row.id === newRow.id ? newRow : row,
     );
     setRowsAndPersist(updatedRows);
@@ -71,7 +65,7 @@ export function EditPage() {
   return (
     <StyledBox id="edit">
       <StyledDataGrid
-        rows={rows}
+        rows={moviesData}
         columns={columns}
         initialState={{
           pagination: {

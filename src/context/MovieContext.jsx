@@ -5,6 +5,7 @@ import {
   CssBaseline,
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
+import movies from "../Movies";
 
 export const ThemeMode = {
   LIGHT: "light",
@@ -17,6 +18,13 @@ export function MovieProvider({ children }) {
   const [mode, setMode] = useState(() => {
     return localStorage.getItem("themeMode") || ThemeMode.LIGHT;
   });
+  const [moviesData, setMovieData] = useState(() => {
+    const storedMovies = localStorage.getItem("movies");
+    if (storedMovies) return JSON.parse(storedMovies);
+    localStorage.setItem("movies", JSON.stringify(movies));
+    return movies;
+  });
+
   const [searchQuery, setSearchQuery] = useState();
 
   const setModeAndPersist = (newMode) => {
@@ -39,7 +47,14 @@ export function MovieProvider({ children }) {
 
   return (
     <MovieContext.Provider
-      value={{ mode, setMode: setModeAndPersist, searchQuery, setSearchQuery }}
+      value={{
+        mode,
+        setMode: setModeAndPersist,
+        searchQuery,
+        setSearchQuery,
+        moviesData,
+        setMovieData,
+      }}
     >
       <MUIThemeProvider theme={theme}>
         <CssBaseline />
